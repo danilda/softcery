@@ -1,0 +1,7 @@
+.idea
+.env
+*.iml
+*.ipr
+*.iws
+*.ids
+*.log

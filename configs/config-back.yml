@@ -1,0 +1,11 @@
+scale:
+  options: #in percents
+    - 25
+    - 50
+    - 75
+    - 100
+
+#rabbit:
+#  queue:
+#    img:
+#      name: "img-queue"

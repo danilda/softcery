@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'softcery-rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/docker/softcery/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/docker/softcery/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+  front:
+    build:
+      context: .
+      dockerfile: "Dockerfile-front"
+    depends_on: rabbitmq
+    environment:
+      - RABBIT_URL=amqp://guest:guest@localhost:5672/
+      - FILE_ROOT_PATH=./
+    ports:
+      - "8084:8084"
+  back:
+    build:
+      context: .
+      dockerfile: "Dockerfile-back"
+    depends_on: rabbitmq
+    environment:
+      - RABBIT_URL=amqp://guest:guest@localhost:5672/
+      - FILE_ROOT_PATH=./
+
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge

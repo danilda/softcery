@@ -1,0 +1,18 @@
+FROM golang:1.17.8 as intermediate
+RUN mkdir /app
+ADD . /app
+WORKDIR /app
+COPY go.mod go.sum ./
+COPY . .
+RUN cd cmd/front && go build -o main .
+
+FROM golang:1.17.8
+
+RUN mkdir /app
+
+WORKDIR /app
+
+COPY --from=intermediate /app/cmd/front/main /app
+COPY --from=intermediate /app/configs/config-front.yml /app/configs/
+
+CMD ["/app/main"]

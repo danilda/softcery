@@ -1,0 +1,16 @@
+server:
+  host: "localhost"
+  port: 8084
+
+scale:
+  options: #in percents
+    - 25
+    - 50
+    - 75
+    - 100
+  maxImgSize: 32 #in mb
+
+rabbit:
+  queue:
+    img:
+      name: "img-queue"
