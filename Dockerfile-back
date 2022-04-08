@@ -4,19 +4,9 @@ ADD . /app
 WORKDIR /app
 COPY go.mod go.sum ./
 COPY . .
-#RUN apt-get update -y
-#RUN apt-get install -y libvips
-#RUN wget https://github.com/libvips/libvips/releases/download/v8.12.2/vips-8.12.2.tar.gz && tar -xvf vips-8.12.2.tar.gz && cd vips-8.12.2 && ./configure
-ARG VIPS_VERSION="8.11.2"
-RUN wget https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz
-RUN apt-get update && apt-get install build-base pkgconfig glib-dev gobject-introspection libxml2-dev expat-dev jpeg-dev libwebp-dev libpng-dev
-# Exit 0 added because warnings tend to exit the build at a non-zero status
-RUN tar -xf vips-${VIPS_VERSION}.tar.gz && cd vips-${VIPS_VERSION} && ./configure && make && make install && ldconfig; exit 0
-RUN apt-get del automake build-base
-RUN apt-get add --update go gcc g++
-RUN apt-get add --no-cache git
 
-RUN apt-get update && apt-get add automake build-base pkgconfig glib-dev gobject-introspection libxml2-dev expat-dev jpeg-dev libwebp-dev libpng-dev
+RUN apt-get update -y
+RUN apt-get install -y libvips
 
 RUN cd cmd/back && CGO_CFLAGS_ALLOW=-Xpreprocessor go build -o main .
 
@@ -28,6 +18,9 @@ WORKDIR /app
 
 COPY --from=intermediate /app/cmd/back/main /app
 COPY --from=intermediate /app/configs/config-back.yml /app/configs/
+
+RUN apt-get update -y
+RUN apt-get install -y libvips
 
 CMD ["/app/main"]
 
