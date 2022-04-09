@@ -7,7 +7,7 @@ import (
 
 func InitConfig() {
 	viper.AddConfigPath("configs")
-	viper.SetConfigName("config-back")
+	viper.SetConfigName("config-front")
 
 	err := viper.ReadInConfig()
 	panicOnErr(err)
