@@ -39,4 +39,7 @@ type BackConfig struct {
 			}
 		}
 	}
+	ImgOptimization struct {
+		Workers int
+	} `yaml:"img-optimization" validate:"required"`
 }

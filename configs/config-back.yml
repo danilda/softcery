@@ -5,7 +5,10 @@ scale:
     - 75
     - 100
 
-#rabbit:
-#  queue:
-#    img:
-#      name: "img-queue"
+rabbit:
+  queue:
+    img:
+      name: "img-queue"
+
+img-optimization:
+  workers: 5

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/h2non/bimg"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"softcery/internal/pkg/entity"
 	"softcery/internal/pkg/imgUtil"
@@ -43,9 +44,17 @@ func (s *OptimizationService) OptimizeImgFromQueue(cxt context.Context, wg *sync
 			return
 		}
 
-		for img := range imgs {
-			s.HandleImgOptimization(img)
+		workerPoolWg := new(sync.WaitGroup)
+		for i := 0; i < viper.GetInt("img-optimization.workers"); i++ {
+			workerPoolWg.Add(1)
+			go func(imgs <-chan *entity.Image, workerWg *sync.WaitGroup) {
+				defer workerWg.Done()
+				for img := range imgs {
+					s.HandleImgOptimization(img)
+				}
+			}(imgs, workerPoolWg)
 		}
+		workerPoolWg.Wait()
 
 		errCh <- errors.New("Img channel closed")
 	}()
@@ -53,7 +62,6 @@ func (s *OptimizationService) OptimizeImgFromQueue(cxt context.Context, wg *sync
 }
 
 func (s *OptimizationService) HandleImgOptimization(img *entity.Image) {
-	zap.S().Info("Handled img")
 	originalImg := bimg.NewImage(img.Data)
 
 	for _, scale := range imgUtil.ScalingOptions() {
